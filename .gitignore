@@ -73,3 +73,10 @@ site/
 
 # Mac files
 .DS_Store
+
+# IDE files
+.idea
+
+# Project-specific files
+docs/_build
+huey.db
