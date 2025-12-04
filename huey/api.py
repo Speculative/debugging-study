@@ -463,12 +463,12 @@ class Huey(object):
     def _requeue_task(self, task, timestamp, retry_eta=None):
         task.retries -= 1
         logger.info('Requeueing %s, %s retries', task.id, task.retries)
-        if retry_eta is not None:
-            task.eta = retry_eta
-            self.add_schedule(task)
-        elif task.retry_delay:
+        if task.retry_delay:
             delay = datetime.timedelta(seconds=task.retry_delay)
             task.eta = timestamp + delay
+            self.add_schedule(task)
+        elif retry_eta is not None:
+            task.eta = retry_eta
             self.add_schedule(task)
         else:
             self.enqueue(task)

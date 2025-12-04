@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run All Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtests.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": []
+        },
+        {
+            "name": "Run API Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtests.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": ["api", "--verbosity=2"]
+        },
+        {
+            "name": "Debug Failing Test",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "unittest",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "huey.tests.test_api.TestQueue.test_retrytask_eta_delay",
+                "-v"
+            ]
+        }
+    ]
+}
