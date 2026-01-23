@@ -73,3 +73,7 @@ site/
 
 # Mac files
 .DS_Store
+
+# Java files
+*.class
+.gradle/
