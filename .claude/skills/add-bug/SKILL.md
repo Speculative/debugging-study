@@ -1,3 +1,8 @@
+---
+name: add-bug
+description: Create a new bug branch from an existing project branch with a single debugging challenge
+---
+
 # Add Bug Branch
 
 Creates a new bug branch from an existing project branch with a single debugging challenge.

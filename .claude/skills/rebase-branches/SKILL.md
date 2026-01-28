@@ -1,3 +1,8 @@
+---
+name: rebase-branches
+description: Rebase all challenge branches on the latest main branch to propagate changes
+---
+
 # Rebase All Challenge Branches
 
 Rebases all challenge branches on the latest main branch to propagate changes.
@@ -13,7 +18,7 @@ Rebases all challenge branches on the latest main branch to propagate changes.
 When this command is invoked:
 
 1. Check that the repository is in a clean state (no uncommitted changes)
-2. Execute the rebase script: `.claude/scripts/rebase-all-branches.sh`
+2. Execute the rebase script: `.claude/skills/rebase-branches/scripts/rebase-all-branches.sh`
 3. Report the results to the user:
    - List successfully rebased branches
    - List any branches that had conflicts

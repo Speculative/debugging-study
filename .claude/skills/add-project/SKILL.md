@@ -1,3 +1,8 @@
+---
+name: add-project
+description: Create a new project branch from an external GitHub repository
+---
+
 # Add Project Branch
 
 Creates a new project branch from an external GitHub repository.
