@@ -48,6 +48,10 @@ When this command is invoked:
      ```bash
      uv add pytest pytest-timeout
      ```
+   - Install autopsy debugging tool in editable mode:
+     ```bash
+     uv add --dev --editable /home/jtao/phd/autopsy
+     ```
    - Commit the dependency files if created
 
 6. **Provide next steps**:
