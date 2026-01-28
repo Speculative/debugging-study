@@ -17,15 +17,16 @@ Creates a new bug branch from an existing project branch with a single debugging
 
 When this command is invoked:
 
-1. **Ask the user for required information**:
-   - Project name (the base project branch, e.g., `tinydb`, `quixbugs-challenge`)
-   - Bug number (or auto-detect next available number)
-   - Brief description of what bug they want to add (optional, for commit message)
+1. **Detect or ask for project**:
+   - Check the current git branch
+   - If on a project branch (e.g., `tinydb`, `python-markdown`) or bug branch (e.g., `huey-bug1`), extract the project name automatically
+   - Only ask the user to select a project if not currently on a project/bug branch
+   - Auto-detect the next available bug number by checking for existing `<project-name>-bug*` branches
 
 2. **Verify current state**:
    - Confirm the project branch exists
    - Check for uncommitted changes (warn if any exist)
-   - Find the next available bug number by checking for existing `<project-name>-bug*` branches
+   - Find the next available bug number
 
 3. **Create the bug branch**:
    ```bash
@@ -33,32 +34,43 @@ When this command is invoked:
    git checkout -b <project-name>-bug<N>
    ```
 
-4. **Guide the user through adding the bug**:
-   - Explain that they should now:
-     a. Modify the code to introduce the bug
-     b. Verify the bug causes a test failure or observable issue
-   - Wait for the user to make their changes (don't make code changes automatically)
+4. **Automatically generate and introduce a bug**:
+   - Explore the codebase to understand the project structure and identify a suitable location for a bug
+   - Choose a bug type that follows the guidelines (conditional path change or method call change)
+   - Introduce ONE bug that:
+     - Is not obvious from simple code inspection
+     - Will cause at least one test to fail
+     - Is realistic and debuggable within 30 minutes
+     - Follows the bug type guidelines from research (see below)
+   - Do NOT tell the user what bug you introduced or where - this is for blind debugging studies
 
-5. **Help create the run script**:
-   - Ask the user what command reproduces the bug (e.g., `pytest tests/test_foo.py::test_bar`)
-   - Create `run.sh` with the appropriate command:
+5. **Verify the bug causes a test failure**:
+   - Run the test suite to identify which test(s) now fail
+   - Verify that the failure is clear and reproducible
+   - If no tests fail, modify the bug or add to it until there's a clear test failure
+
+6. **Create the run script**:
+   - Create `run.sh` with the command that reproduces the failure:
      ```bash
      #!/bin/bash
      uv run <command>
      ```
    - Make it executable: `chmod +x run.sh`
+   - The command should run the specific failing test(s)
 
-6. **Commit the bug**:
+7. **Commit the bug**:
    ```bash
    git add .
-   git commit -m "[<project-name>] Add bug <N>: <description>"
+   git commit -m "[<project-name>] Add bug <N>"
    ```
+   - Use a generic commit message without describing what the bug is
 
-7. **Verify the setup**:
+8. **Verify the setup**:
    - Test that `./run.sh` reproduces the failure
    - Confirm all changes are committed
+   - Report to the user that the bug has been added (without revealing what it is)
 
-8. **Provide next steps**:
+9. **Provide next steps**:
    - Suggest pushing the branch: `git push -u origin <project-name>-bug<N>`
    - Remind that this branch is now a complete debugging challenge
 

@@ -503,9 +503,9 @@ class SetextHeaderProcessor(BlockProcessor):
         lines = blocks.pop(0).split('\n')
         # Determine level. `=` is 1 and `-` is 2.
         if lines[1].startswith('='):
-            level = 1
-        else:
             level = 2
+        else:
+            level = 1
         h = etree.SubElement(parent, 'h%d' % level)
         h.text = lines[0].strip()
         if len(lines) > 2:
