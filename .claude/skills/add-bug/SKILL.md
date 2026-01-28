@@ -71,6 +71,14 @@ Bug branches are the actual debugging challenges given to participants. Each bug
 - Have bugs that aren't obvious from simple code inspection
 - Include clear test failures or observable incorrect behavior
 
+### Types of Bugs
+
+According to academic software engineering research, the majority of all bug fixes are one of two kinds:
+1. Changes to a conditional path (adding a predicate to a branch, adding/removing a branch, adding an early exit branch)
+2. Changing a method call by changing the expression passed to the method or changing the shape of the method call
+
+Thus, bugs that we add should prefer to have _solutions_ that are one of these types of fixes.
+
 ### Guidelines for Good Bugs
 A good 30-minute debugging challenge should:
 - ✅ Require executing code to understand the failure
