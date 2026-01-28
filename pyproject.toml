@@ -1,2 +1,10 @@
 [build-system]
 requires = ["setuptools", "wheel"]
+
+[dependency-groups]
+dev = [
+    "autopsy",
+]
+
+[tool.uv.sources]
+autopsy = { path = "../autopsy", editable = true }
