@@ -50,11 +50,7 @@ When this command is invoked:
      ```
    - Commit the dependency files if created
 
-6. **Update documentation**:
-   - Add the new project to `.claude/README.md` under "Available Challenge Branches"
-   - Commit the documentation update
-
-7. **Provide next steps**:
+6. **Provide next steps**:
    - Suggest running `/rebase-branches` to propagate changes
    - Remind user to create bug branches from this project branch using `/add-bug`
 
