@@ -35,12 +35,20 @@ dependencies = [
     { name = "pytest-timeout" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "autopsy" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "autopsy", editable = "../autopsy" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "pytest-timeout", specifier = ">=2.4.0" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "autopsy", editable = "../autopsy" }]
 
 [[package]]
 name = "exceptiongroup"

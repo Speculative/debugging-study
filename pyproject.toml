@@ -12,3 +12,8 @@ dependencies = [
 
 [tool.uv.sources]
 autopsy = { path = "../autopsy", editable = true }
+
+[dependency-groups]
+dev = [
+    "autopsy",
+]
