@@ -95,8 +95,12 @@ packages = ['markdown', 'markdown.extensions']
 [tool.setuptools.dynamic]
 version = {attr = 'markdown.__meta__.__version__'}
 
+[tool.uv.sources]
+autopsy = { path = "../autopsy", editable = true }
+
 [dependency-groups]
 dev = [
+    "autopsy",
     "pytest>=9.0.2",
     "pytest-timeout>=2.4.0",
 ]
