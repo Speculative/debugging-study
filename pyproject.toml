@@ -100,3 +100,6 @@ dev = [
     "pytest>=9.0.2",
     "pytest-timeout>=2.4.0",
 ]
+
+[project.entry-points.pytest11]
+autopsy = "autopsy.pytest"
