@@ -60,7 +60,7 @@ include = [
 include = ["tinydb"]
 
 [tool.uv.sources]
-autopsy = { path = "../autopsy", editable = true }
+autopsy = { path = "autopsy-repo", editable = true }
 
 [build-system]
 requires = ["hatchling"]

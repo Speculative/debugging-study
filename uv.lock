@@ -18,7 +18,7 @@ wheels = [
 [[package]]
 name = "autopsy"
 version = "0.1.0"
-source = { editable = "../autopsy" }
+source = { editable = "autopsy-repo" }
 
 [package.metadata]
 requires-dist = [
@@ -901,7 +901,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "autopsy", editable = "../autopsy" },
+    { name = "autopsy", editable = "autopsy-repo" },
     { name = "coveralls", specifier = "~=4.0" },
     { name = "pycodestyle", specifier = "~=2.10" },
     { name = "pytest", specifier = "~=9.0" },
