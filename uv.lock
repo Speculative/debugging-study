@@ -5,12 +5,12 @@ requires-python = ">=3.10"
 [manifest]
 
 [manifest.dependency-groups]
-dev = [{ name = "autopsy", editable = "../autopsy" }]
+dev = [{ name = "autopsy", editable = "autopsy-repo" }]
 
 [[package]]
 name = "autopsy"
 version = "0.1.0"
-source = { editable = "../autopsy" }
+source = { editable = "autopsy-repo" }
 
 [package.metadata]
 requires-dist = [
