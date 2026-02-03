@@ -96,7 +96,7 @@ packages = ['markdown', 'markdown.extensions']
 version = {attr = 'markdown.__meta__.__version__'}
 
 [tool.uv.sources]
-autopsy = { path = "../autopsy", editable = true }
+autopsy = { path = "autopsy-repo", editable = true }
 
 [dependency-groups]
 dev = [
