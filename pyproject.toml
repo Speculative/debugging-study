@@ -99,7 +99,11 @@ version = {attr = 'markdown.__meta__.__version__'}
 dev = [
     "pytest>=9.0.2",
     "pytest-timeout>=2.4.0",
+    "autopsy",
 ]
+
+[tool.uv.sources]
+autopsy = { path = "autopsy-repo", editable = true }
 
 [project.entry-points.pytest11]
 autopsy = "autopsy.pytest"
