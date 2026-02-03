@@ -1,0 +1,3 @@
+[submodule "autopsy"]
+	path = autopsy
+	url = https://github.com/Speculative/autopsy
