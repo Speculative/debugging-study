@@ -5,7 +5,7 @@ requires-python = ">=3.10"
 [[package]]
 name = "autopsy"
 version = "0.1.0"
-source = { editable = "../autopsy" }
+source = { editable = "autopsy-repo" }
 
 [package.metadata]
 requires-dist = [
@@ -42,13 +42,13 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "autopsy", editable = "../autopsy" },
+    { name = "autopsy", editable = "autopsy-repo" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "pytest-timeout", specifier = ">=2.4.0" },
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "autopsy", editable = "../autopsy" }]
+dev = [{ name = "autopsy", editable = "autopsy-repo" }]
 
 [[package]]
 name = "exceptiongroup"
