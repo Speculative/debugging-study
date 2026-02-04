@@ -39,7 +39,21 @@ When this command is invoked:
    ```
 
 5. **Set up dependencies**:
-   - Create a root-level `pyproject.toml` (not in the subtree) with the following content:
+   - Check if `pyproject.toml` exists at the root level (it will if the subtree has one)
+   - If it exists: Add the following to the existing `pyproject.toml`:
+     - Add `dev` to the `[dependency-groups]` section:
+       ```toml
+       dev = [
+         "autopsy",
+         "pytest-timeout>=2.4.0",
+       ]
+       ```
+     - Add `[tool.uv.sources]` section (if not already present):
+       ```toml
+       [tool.uv.sources]
+       autopsy = { path = "autopsy-repo", editable = true }
+       ```
+   - If it doesn't exist: Create a root-level `pyproject.toml` with:
      ```toml
      [build-system]
      requires = ["setuptools", "wheel"]
@@ -54,13 +68,9 @@ When this command is invoked:
      [tool.uv.sources]
      autopsy = { path = "autopsy-repo", editable = true }
      ```
-   - Install dependencies:
+   - Commit the dependency changes:
      ```bash
-     uv sync --dev
-     ```
-   - Commit the dependency files:
-     ```bash
-     git add pyproject.toml uv.lock
+     git add pyproject.toml
      git commit -m "Add autopsy debugging tool dependency"
      ```
 
