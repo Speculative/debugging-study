@@ -39,20 +39,30 @@ When this command is invoked:
    ```
 
 5. **Set up dependencies**:
-   - Check if `pyproject.toml` exists in the subtree
-   - If not, initialize uv project:
-     ```bash
-     uv init --no-package
+   - Create a root-level `pyproject.toml` (not in the subtree) with the following content:
+     ```toml
+     [build-system]
+     requires = ["setuptools", "wheel"]
+
+     [dependency-groups]
+     dev = [
+         "autopsy",
+         "pytest>=9.0.2",
+         "pytest-timeout>=2.4.0",
+     ]
+
+     [tool.uv.sources]
+     autopsy = { path = "autopsy-repo", editable = true }
      ```
-   - Add common test dependencies:
+   - Install dependencies:
      ```bash
-     uv add pytest pytest-timeout
+     uv sync --dev
      ```
-   - Install autopsy debugging tool in editable mode:
+   - Commit the dependency files:
      ```bash
-     uv add --dev --editable /home/jtao/phd/autopsy
+     git add pyproject.toml uv.lock
+     git commit -m "Add autopsy debugging tool dependency"
      ```
-   - Commit the dependency files if created
 
 6. **Provide next steps**:
    - Suggest running `/rebase-branches` to propagate changes
