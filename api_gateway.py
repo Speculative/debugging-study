@@ -107,7 +107,10 @@ class APIGateway:
                 request, 429, reason="quota_exceeded", quota_remaining=0
             )
 
-        # Step 3: Check rate limit
+        # Step 3: Consume quota
+        new_remaining = self._quota_service.consume(request.user_id)
+
+        # Step 4: Check rate limit
         rate_allowed, window_remaining = self._rate_limiter.check(
             request.user_id, request.timestamp
         )
@@ -116,11 +119,8 @@ class APIGateway:
                 request,
                 429,
                 reason="rate_limited",
-                quota_remaining=quota_remaining,
+                quota_remaining=new_remaining,
             )
-
-        # Step 4: Consume quota (only after all checks pass)
-        new_remaining = self._quota_service.consume(request.user_id)
 
         # Step 5: Route to backend
         result = self._backend.handle(request.path, request.method, request.body)
