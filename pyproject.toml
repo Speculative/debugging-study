@@ -12,4 +12,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-autopsy = { path = "autopsy-repo", editable = true }
+autopsy = { path = "../autopsy", editable = true }
+
+[project.entry-points.pytest11]
+autopsy = "autopsy.pytest"
