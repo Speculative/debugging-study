@@ -1,0 +1,17 @@
+[project]
+name = "sensor-calibration"
+version = "0.1.0"
+description = "Sensor data ingestion pipeline with calibration and quality assessment"
+requires-python = ">=3.10"
+
+[dependency-groups]
+dev = [
+    "autopsy",
+    "pytest>=8.0",
+]
+
+[tool.uv.sources]
+autopsy = { path = "autopsy-repo", editable = true }
+
+[project.entry-points.pytest11]
+autopsy = "autopsy.pytest"
