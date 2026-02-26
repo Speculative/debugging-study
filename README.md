@@ -1,4 +1,8 @@
-You are a research engineer working in a lab that's using temperature sensors in a controlled environment. You have a data pipeline that collects readings from the temperature sensors, performs some calibration and adjustment steps, and performs an automated check to confirm that their readings are consistent.
+![temperature sensors](sensors.png)
+
+You are a research engineer working in a lab that's performing temperature-sensitive experiments in a temperature-controlled environment. The environment is supposed to keep the temperature constant, but there will still be slight variations in temperature distributed across the room that need to be accounted for in the experimental analysis, hence the need for sensors on each shelf of each rack.
+
+You have a data pipeline that collects readings from the temperature sensors, performs some calibration and adjustment steps depending on the type of sensor, and performs an automated check to confirm that their readings are consistent. Every morning, you take a reading from each sensor in the lab to monitor that they're still working as expected.
 
 Today, your sensor quality check test is failing: the batch standard deviation is nearly 12° when it should be under 2° in a chamber this stable. Nothing obvious has changed in the physical setup, and a quick visual scan of the raw readings in `sensor_readings.py` looks reasonable — all the sensors are reporting values somewhere in the 20s.
 
