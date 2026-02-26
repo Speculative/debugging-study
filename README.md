@@ -1,6 +1,8 @@
-You’re a developer working on your company’s API Gateway, which manages how many requests users are allowed to send to your API service. There are two types of limits: quotas (which are consumed for each request and last for a whole week) and rate limits (which prevent you from making too many requests in a short period of time). You’ve gotten some bug reports from users that say they’re running out of quota faster than they expect to.
+![API gateway](api_gateway.png)
 
-The API gateway code is in `api_gateway.py`. Treat code in `external_services` as if it contained network calls to other services: it's not important that you understand how it works.  You can assume that  `external_services.py` and the pytest code are correct.
+You’re a developer working on your company’s API Gateway, which manages how many requests users are allowed to send to your API service to prevent it from being overloaded by any one user. There are two types of limits: quotas (which are consumed for each request and last for a whole week) and rate limits (which prevent you from making too many requests in a short period of time). You’ve gotten some bug reports from users that say they’re running out of quota faster than they expect to.
+
+The API gateway code is in `api_gateway.py`. Treat code in `external_services` as if it contained network calls to other services: it's not important that you understand how it works (but you can look at it if you want).  You can assume that  `external_services.py` and the pytest code are correct.
 
 Do not look at the git history. The study facilitator will act as a product manager: they can answer any questions you have about what the API gateway should be doing, but they cannot help you debug.
 
