@@ -8,8 +8,6 @@ Today, your sensor quality check test is failing: the batch standard deviation i
 
 The processing code in `sensor_pipeline.py` is where the sensor calibration and quality post-processing logic lives.
 
-You can assume that the raw sensor readings are correct, and the pytest quality check is correct that the standard deviation of the sensors should be less than 2°.
+You can assume that the raw sensor readings are correct, and that the quality check in `test_sensor_pipeline.py` is correct that the standard deviation of the sensors should be less than 2°.  Do not look at the git history.
 
-Do not look at the git history. The study facilitator will act as your scientist labmate: they can answer any questions you have about what the processing pipeline should be doing, but they cannot help you debug.
-
-You can run the failing test using `./run.sh`. **Your goal is to make the quality check test pass, so you will need to fix the bug in the processing pipeline.** If you're uncertain about whether a certain change is allowed, ask the study facilitator. Feel free to debug and make the change in whatever way feels natural, but you should not use an AI assistant. Please speak aloud as you work.
+You can run the failing test using `./run.sh`. **Your goal is to make the quality check test pass, so you will need to fix the bug in the processing pipeline.** If you're uncertain about whether a certain change is allowed, ask the study facilitator. Feel free to debug and make the change in whatever way feels natural, but you should not use an AI assistant. Please think aloud as you work.

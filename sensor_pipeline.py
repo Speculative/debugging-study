@@ -8,9 +8,6 @@ deserialization and processing step for observability.
 from dataclasses import dataclass
 from datetime import datetime
 
-import autopsy
-
-
 @dataclass
 class CalibrationData:
     """Calibration parameters for a sensor."""
@@ -196,10 +193,10 @@ class SensorPipeline:
         reading = self._deserialize_reading(json_data)
 
         # Step 2: Apply calibration
-        adjusted_value = self._apply_calibration(reading)
+        recalibrated_value = self._apply_calibration(reading)
 
         # Step 3: Drift correction
-        drift_corrected = self._apply_drift_correction(reading, adjusted_value)
+        drift_corrected = self._apply_drift_correction(reading, recalibrated_value)
 
         # Step 4: Linearization
         final_value = self._apply_linearization(reading, drift_corrected)
