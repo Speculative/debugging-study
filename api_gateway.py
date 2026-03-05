@@ -93,10 +93,10 @@ class AuthMiddleware(Middleware):
     """Validates API keys against the authentication service."""
 
     def __init__(self, auth_service):
-        self._auth_service = auth_service
+        self._EXT_auth_service = auth_service
 
     def evaluate(self, context: RequestContext) -> None:
-        authenticated_user = self._auth_service.validate(context.api_key)
+        authenticated_user = self._EXT_auth_service.validate(context.api_key)
         if authenticated_user is None:
             context.rejected = True
             context.rejection_status = 401
@@ -156,11 +156,11 @@ class QuotaMiddleware(Middleware):
     """
 
     def __init__(self, quota_service):
-        self._quota_service = quota_service
+        self._EXT_quota_service = quota_service
 
     def evaluate(self, context: RequestContext) -> None:
         cost = context.state.get("quota_cost", 1)
-        remaining = self._quota_service.get_remaining(context.user_id)
+        remaining = self._EXT_quota_service.get_remaining(context.user_id)
         if remaining < cost:
             context.rejected = True
             context.rejection_status = 429
@@ -170,8 +170,8 @@ class QuotaMiddleware(Middleware):
     def commit(self, context: RequestContext) -> None:
         cost = context.state.get("quota_cost", 1)
         for _ in range(cost):
-            self._quota_service.consume(context.user_id)
-        context.state["quota_remaining"] = self._quota_service.get_remaining(
+            self._EXT_quota_service.consume(context.user_id)
+        context.state["quota_remaining"] = self._EXT_quota_service.get_remaining(
             context.user_id
         )
 
@@ -186,22 +186,22 @@ class RateLimitMiddleware(Middleware):
     def __init__(self, max_requests: int, window_seconds: float):
         self.max_requests = max_requests
         self.window_seconds = window_seconds
-        self._request_log: dict[str, list[float]] = {}
+        self.request_log: dict[str, list[float]] = {}
 
     def evaluate(self, context: RequestContext) -> None:
         user_id = context.user_id
         timestamp = context.timestamp
 
-        if user_id not in self._request_log:
-            self._request_log[user_id] = []
+        if user_id not in self.request_log:
+            self.request_log[user_id] = []
         
         # Remove timestamps outside the current window
         window_start = timestamp - self.window_seconds
-        self._request_log[user_id] = [
-            t for t in self._request_log[user_id] if t > window_start
+        self.request_log[user_id] = [
+            t for t in self.request_log[user_id] if t > window_start
         ]
 
-        current_count = len(self._request_log[user_id])
+        current_count = len(self.request_log[user_id])
         if current_count >= self.max_requests:
             context.rejected = True
             context.rejection_status = 429
@@ -209,7 +209,7 @@ class RateLimitMiddleware(Middleware):
             return
 
         # Record this request
-        self._request_log[user_id].append(timestamp)
+        self.request_log[user_id].append(timestamp)
 
         context.state["rate_limit_remaining"] = self.max_requests - current_count - 1
 
@@ -222,11 +222,11 @@ class MiddlewareEngine:
     """
 
     def __init__(self):
-        self._middleware: list[Middleware] = []
+        self.middleware: list[Middleware] = []
 
     def register(self, middleware: Middleware) -> None:
         """Add a middleware to the end of the pipeline."""
-        self._middleware.append(middleware)
+        self.middleware.append(middleware)
 
     def execute(self, context: RequestContext) -> None:
         """Run the middleware pipeline on the given context.
@@ -234,7 +234,7 @@ class MiddlewareEngine:
         Each middleware evaluates the request and, if approved,
         commits its side effects. Processing halts on first rejection.
         """
-        for middleware in self._middleware:
+        for middleware in self.middleware:
             middleware.evaluate(context)
             if context.rejected:
                 return
@@ -253,11 +253,11 @@ class APIGateway:
         self._EXT_quota_service = QuotaService()
         self._EXT_backend_service = BackendService()
 
-        self._engine = MiddlewareEngine()
-        self._engine.register(AuthMiddleware(self._EXT_auth_service))
-        self._engine.register(QuotaCostCalculator())
-        self._engine.register(QuotaMiddleware(self._EXT_quota_service))
-        self._engine.register(RateLimitMiddleware(rate_limit, window_seconds))
+        self.engine = MiddlewareEngine()
+        self.engine.register(AuthMiddleware(self._EXT_auth_service))
+        self.engine.register(QuotaCostCalculator())
+        self.engine.register(QuotaMiddleware(self._EXT_quota_service))
+        self.engine.register(RateLimitMiddleware(rate_limit, window_seconds))
 
     def register_user(self, user_id: str, api_key: str, quota: int):
         """Register a user with the gateway."""
@@ -276,7 +276,7 @@ class APIGateway:
             body=request.body,
         )
         
-        self._engine.execute(context)
+        self.engine.execute(context)
 
         if context.rejected:            
 
