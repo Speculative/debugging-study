@@ -7,25 +7,36 @@ quota state.
 
 from api_gateway import APIGateway, Request
 
+# Each user has a characteristic mix of HTTP methods, which affects
+# per-request quota cost (GET=1, POST=2, DELETE=3).
+USER_METHODS = {
+    "alice": ["GET", "GET", "GET", "POST"],
+    "bob": ["GET", "GET", "POST", "GET", "GET", "POST", "GET", "DELETE"],
+    "charlie": ["GET", "POST", "GET"],
+    "diana": ["GET", "GET", "GET", "GET", "GET", "DELETE"],
+}
 
-def make_request(request_id, user_id, timestamp, path="/api/data"):
+
+def make_request(request_id, user_id, timestamp, method="GET", path="/api/data"):
     """Create a request with standard defaults."""
     return Request(
         request_id=f"req_{request_id:03d}",
         user_id=user_id,
         api_key=f"key_{user_id}",
         path=path,
-        method="GET",
+        method=method,
         timestamp=timestamp,
     )
 
 
 def test_rate_limited_requests_preserve_quota():
-    """Rate-limited requests should not consume quota.
+    """Only successful requests should consume quota.
 
     Scenario:
-    - 4 users each have a quota of 50 requests
+    - 4 users each have a quota of 80 request units
     - Rate limit: 5 requests per 10-second window
+    - Each user sends a characteristic mix of HTTP methods
+      (affecting per-request quota cost)
     - Alice sends steady traffic (1 req / 3s) — never hits rate limit
     - Bob sends bursts (8 reqs every 15s) — hits rate limit each burst
     - Charlie sends moderate traffic (3 reqs / 8s) — stays under rate limit
@@ -33,52 +44,61 @@ def test_rate_limited_requests_preserve_quota():
 
     Expected behavior:
     - Bob gets rate_limited on his 6th-8th request in each burst
-    - Rate-limited requests should NOT consume quota
-    - No user should ever see quota_exceeded, since each user makes
-      fewer than 50 *successful* requests total
+    - Only successful requests should consume quota
+    - No user should ever see quota_exceeded, since each user's
+      successful requests cost fewer than 80 units total
     """
     gateway = APIGateway(rate_limit=5, window_seconds=10.0)
 
     # Register users with generous quotas
-    gateway.register_user("alice", "key_alice", quota=50)
-    gateway.register_user("bob", "key_bob", quota=50)
-    gateway.register_user("charlie", "key_charlie", quota=50)
-    gateway.register_user("diana", "key_diana", quota=50)
+    gateway.register_user("alice", "key_alice", quota=80)
+    gateway.register_user("bob", "key_bob", quota=80)
+    gateway.register_user("charlie", "key_charlie", quota=80)
+    gateway.register_user("diana", "key_diana", quota=80)
 
     # Build the timeline of requests
     all_requests = []
 
     # Alice: 1 request every 3 seconds for 120 seconds (40 requests)
     for i in range(40):
-        all_requests.append(("alice", i * 3.0))
+        method = USER_METHODS["alice"][i % len(USER_METHODS["alice"])]
+        all_requests.append(("alice", i * 3.0, method))
 
     # Bob: bursts of 8 requests every 15 seconds (64 requests)
+    bob_idx = 0
     for burst_start in range(0, 120, 15):
         for j in range(8):
-            all_requests.append(("bob", burst_start + j * 0.5))
+            method = USER_METHODS["bob"][bob_idx % len(USER_METHODS["bob"])]
+            all_requests.append(("bob", burst_start + j * 0.5, method))
+            bob_idx += 1
 
     # Charlie: 3 requests every 8 seconds (45 requests)
+    charlie_idx = 0
     for group_start in range(0, 120, 8):
         for j in range(3):
-            all_requests.append(("charlie", group_start + j * 1.0))
+            method = USER_METHODS["charlie"][charlie_idx % len(USER_METHODS["charlie"])]
+            all_requests.append(("charlie", group_start + j * 1.0, method))
+            charlie_idx += 1
 
     # Diana: 1 request every 2.5 seconds (48 requests)
     for i in range(48):
-        all_requests.append(("diana", i * 2.5))
+        method = USER_METHODS["diana"][i % len(USER_METHODS["diana"])]
+        all_requests.append(("diana", i * 2.5, method))
 
     # Sort by timestamp to simulate realistic interleaving
     all_requests.sort(key=lambda x: x[1])
 
     # Process all requests
     results = []
-    for req_id, (user_id, timestamp) in enumerate(all_requests):
-        request = make_request(req_id, user_id, timestamp)
+    for req_id, (user_id, timestamp, method) in enumerate(all_requests):
+        request = make_request(req_id, user_id, timestamp, method=method)
         response = gateway.handle_request(request)
         results.append(
             {
                 "request_id": request.request_id,
                 "user_id": user_id,
                 "timestamp": timestamp,
+                "method": method,
                 "was_allowed": response.was_allowed,
                 "reason": response.reason,
                 "status": response.status,
@@ -112,23 +132,25 @@ def test_all_users_can_complete_normal_workload():
     """
     gateway = APIGateway(rate_limit=5, window_seconds=10.0)
 
-    gateway.register_user("alice", "key_alice", quota=50)
-    gateway.register_user("bob", "key_bob", quota=50)
-    gateway.register_user("charlie", "key_charlie", quota=50)
-    gateway.register_user("diana", "key_diana", quota=50)
+    gateway.register_user("alice", "key_alice", quota=80)
+    gateway.register_user("bob", "key_bob", quota=80)
+    gateway.register_user("charlie", "key_charlie", quota=80)
+    gateway.register_user("diana", "key_diana", quota=80)
 
     # Each user sends 30 requests at a steady rate (well within rate limit)
     all_requests = []
     for user in ["alice", "bob", "charlie", "diana"]:
+        methods = USER_METHODS[user]
         for i in range(30):
+            method = methods[i % len(methods)]
             # 1 request every 3 seconds — under 5/10s rate limit
-            all_requests.append((user, i * 3.0))
+            all_requests.append((user, i * 3.0, method))
 
     all_requests.sort(key=lambda x: x[1])
 
     blocked = []
-    for req_id, (user_id, timestamp) in enumerate(all_requests):
-        request = make_request(req_id, user_id, timestamp)
+    for req_id, (user_id, timestamp, method) in enumerate(all_requests):
+        request = make_request(req_id, user_id, timestamp, method=method)
         response = gateway.handle_request(request)
         if not response.was_allowed:
             blocked.append(
@@ -136,6 +158,7 @@ def test_all_users_can_complete_normal_workload():
                     "request_id": request.request_id,
                     "user_id": user_id,
                     "timestamp": timestamp,
+                    "method": method,
                     "reason": response.reason,
                 }
             )
