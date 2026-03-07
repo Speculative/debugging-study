@@ -4,4 +4,6 @@ You’re a developer working on your company’s API Gateway, which manages how 
 
 The API gateway code is in `api_gateway.py`. You can assume that code in `external_services.py` and `test_api_gateway.py` is correct. Do not look at the git history.
 
+Please note that there are two tests in api_gateway.py. Only one of them is failing. The solution does NOT involve changing any numbers related to rate limits/quotas -- there is a logical error in the `api_gateway.py` code.
+
 You can run the failing test using `./run.sh`. **Your goal is to make the quality check test pass, so you will need to fix the bug in the processing pipeline.** If you're uncertain about whether a certain change is allowed, ask the study facilitator. Feel free to debug and make the change in whatever way feels natural, but you should not use an AI assistant. Please think aloud as you work.
