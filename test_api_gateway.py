@@ -29,7 +29,7 @@ def make_request(request_id, user_id, timestamp, method="GET", path="/api/data")
     )
 
 
-def test_rate_limited_requests_preserve_quota():
+def test_requests_preserve_quota():
     """Only successful requests should consume quota.
 
     Scenario:
@@ -39,7 +39,7 @@ def test_rate_limited_requests_preserve_quota():
       (affecting per-request quota cost)
     - Alice sends steady traffic (1 req / 3s) — never hits rate limit
     - Bob sends bursts (8 reqs every 15s) — hits rate limit each burst
-    - Charlie sends moderate traffic (3 reqs / 8s) — stays under rate limit
+    - Charlie sends moderate traffic (3 reqs / 8s) — never hits rate limit
     - Diana sends steady traffic (1 req / 2.5s) — never hits rate limit
 
     Expected behavior:
