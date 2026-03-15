@@ -74,10 +74,6 @@ class Middleware:
 
       Phase 2 — commit(context):
         Apply side effects (consume quota, log metrics, etc.).
-        Only called if the request was not rejected by any middleware.
-
-    The engine runs all middleware through both phases in order. A request
-    is only committed once every middleware has approved it.
     """
 
     def evaluate(self, context: RequestContext) -> None:
@@ -169,11 +165,8 @@ class QuotaMiddleware(Middleware):
 
     def commit(self, context: RequestContext) -> None:
         cost = context.state.get("quota_cost", 1)
-        for _ in range(cost):
-            self._EXT_quota_service.consume(context.user_id)
-        context.state["quota_remaining"] = self._EXT_quota_service.get_remaining(
-            context.user_id
-        )
+        remaining = self._EXT_quota_service.consume(context.user_id, cost)
+        context.state["quota_remaining"] = remaining
 
 
 class RateLimitMiddleware(Middleware):

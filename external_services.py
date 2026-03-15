@@ -37,12 +37,12 @@ class QuotaService:
             return 0
         return self._quotas[user_id]["remaining"]
 
-    def consume(self, user_id):
-        """Consume one unit of quota. Returns the new remaining count."""
+    def consume(self, user_id, amount=1):
+        """Consume quota units. Returns the new remaining count."""
         if user_id not in self._quotas:
             return 0
         self._quotas[user_id]["remaining"] = max(
-            0, self._quotas[user_id]["remaining"] - 1
+            0, self._quotas[user_id]["remaining"] - amount
         )
         return self._quotas[user_id]["remaining"]
 
